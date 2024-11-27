@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Discos Musicais</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div class="container">
+    <h1>Gerenciar Artistas</h1>
+
+    <!-- Formulário de Busca -->
+    <form action="/search-artists" method="GET">
+        <input type="text" name="query" placeholder="Buscar Artistas" required>
+        <button type="submit">Buscar</button>
+    </form>
+
+    <!-- Formulário para Adicionar Artista -->
+    <form action="/add-artist" method="POST">
+        <input type="text" name="name" placeholder="Nome do Artista" required>
+        <input type="text" name="genre" placeholder="Gênero Musical" required>
+        <input type="text" name="albums" placeholder="Álbuns (separados por vírgula)" required>
+        <button type="submit">Adicionar Artista</button>
+    </form>
+
+    <div id="artists-list">
+        <h2>Artistas Cadastrados</h2>
+        <ul>
+            <% if (artists.length === 0) { %>
+                <li>Nenhum artista encontrado.</li>
+            <% } else { %>
+                <% artists.forEach((artist, index) => { %>
+                    <li>
+                        <strong><%= artist.name %></strong> - <%= artist.genre %><br>
+                        Álbuns: <%= artist.albums.join(', ') %>
+
+                        <!-- Botão para Exibir Formulário de Edição -->
+                        <button onclick="toggleEditForm('<%= index %>')">Editar</button>
+
+                        <!-- Formulário de Edição Oculto Inicialmente -->
+                        <div id="edit-form-<%= index %>" style="display:none;">
+                            <form action="/edit-artist/<%= index %>" method="POST" style="display:inline;">
+                                <input type="text" name="name" placeholder="Novo Nome" value="<%= artist.name %>" required>
+                                <input type="text" name="genre" placeholder="Novo Gênero" value="<%= artist.genre %>" required>
+                                <input type="text" name="albums" placeholder="Novos Álbuns (separados por vírgula)" value="<%= artist.albums.join(',') %>" required>
+                                <button type="submit">Salvar</button>
+                            </form>
+                        </div>
+
+                        <!-- Formulário de Remoção -->
+                        <form action="/remove-artist/<%= index %>" method="POST" style="display:inline;">
+                            <button type="submit" onclick="return confirm('Tem certeza que deseja remover este artista?')">Remover</button>
+                        </form>
+
+                    </li>
+                <% }) %>
+            <% } %>
+        </ul>
+    </div>
+    <a href="/">Voltar ao Catálogo de Discos</a>
+</div>
+
+<script>
+    // Função JavaScript para alternar a visibilidade do formulário de edição
+    function toggleEditForm(index) {
+        const form = document.getElementById('edit-form-' + index);
+        if (form.style.display === 'none' || form.style.display === '') {
+            form.style.display = 'block';  // Exibe o formulário
+        } else {
+            form.style.display = 'none';   // Oculta o formulário
+        }
+    }
+</script>
+</body>
+</html>

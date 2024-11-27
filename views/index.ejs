@@ -1,0 +1,76 @@
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Catálogo de Discos Musicais</title>
+        <link rel="stylesheet" href="/styles.css">
+    </head>
+    <body>
+        <div class="container">
+            <h1>Catálogo de Discos Musicais</h1>
+            
+            <!-- Formulário de Busca -->
+            <form action="/search-albums" method="GET">
+                <input type="text" name="query" placeholder="Buscar Discos" required>
+                <button type="submit">Buscar</button>
+            </form>
+
+            <!-- Formulário para Adicionar Disco -->
+            <form action="/add-album" method="POST">
+                <input type="text" name="title" placeholder="Título do Disco" required>
+                <input type="text" name="year" placeholder="Ano de Lançamento" required>
+                <input type="text" name="cover" placeholder="URL da Capa" required>
+                <input type="text" name="tracks" placeholder="Faixas (separadas por vírgula)" required>
+                <input type="text" name="genres" placeholder="Gêneros (separados por vírgula)" required>
+                <button type="submit">Adicionar Disco</button>
+            </form>
+
+            <div id="albums-list">
+                <h2>Discos Cadastrados</h2>
+                <ul>
+                    <% albums.forEach((album, index) => { %>
+                        <li>
+                            <strong><%= album.title %></strong> (<%= album.year %>)<br>
+                            <img src="<%= album.cover %>" alt="<%= album.title %>" style="width: 50px;"><br>
+                            Faixas: <%= album.tracks.join(', ') %><br>
+                            Gêneros: <%= album.genres.join(', ') %>
+                            
+                            <!-- Botão para mostrar o formulário -->
+                            <button onclick="toggleEditForm('<%= index %>')">Editar</button>
+            
+                            <!-- Formulário de Edição (inicialmente oculto) -->
+                            <form id="edit-form-<%= index %>" action="/edit-album/<%= index %>" method="POST" style="display:none; margin-top: 10px;">
+                                <input type="text" name="title" placeholder="Novo Título" required value="<%= album.title %>">
+                                <input type="text" name="year" placeholder="Novo Ano" required value="<%= album.year %>">
+                                <input type="text" name="cover" placeholder="Nova URL da Capa" required value="<%= album.cover %>">
+                                <input type="text" name="tracks" placeholder="Novas Faixas (separadas por vírgula)" required value="<%= album.tracks.join(',') %>">
+                                <input type="text" name="genres" placeholder="Novos Gêneros (separados por vírgula)" required value="<%= album.genres.join(',') %>">
+                                <button type="submit">Salvar</button>
+                            </form>
+            
+                            <!-- Formulário de Remoção -->
+                            <form action="/remove-artist/<%= index %>" method="POST" style="display:inline;">
+                                <button type="submit" onclick="return confirm('Tem certeza que deseja remover este album?')">Remover</button>
+                            </form>
+                        </li>
+                    <% }) %>
+                </ul>
+            </div>
+
+            <script>
+                function toggleEditForm(index) {
+                    const form = document.getElementById(`edit-form-${index}`);
+                    if (form.style.display === 'none' || form.style.display === '') {
+                        form.style.display = 'block'; // Mostra o formulário
+                    } else {
+                        form.style.display = 'none'; // Oculta o formulário
+                    }
+                }
+            </script>
+            
+            
+            <a href="/artists">Gerenciar Artistas</a>
+        </div>
+    </body>
+    </html>
